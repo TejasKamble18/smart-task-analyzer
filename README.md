@@ -230,23 +230,15 @@ This multi-strategy system ensures flexibility across different workflows and us
 🕸 Dependency Graph Visualization (SVG)
 
 After task analysis, the frontend generates a real-time SVG graph where:
-
 Each node represents a task
-
 Arrows represent dependencies
-
 Node color reflects priority level
-
 Layout adjusts dynamically based on the number of tasks
 
 This visualization instantly highlights:
-
 Bottleneck tasks
-
 Unblockers
-
 Circular dependency issues
-
 Task clusters
 
 🧪 Running Tests
@@ -254,13 +246,9 @@ python manage.py test tasks
 
 
 Tests include:
-
 Score validation
-
 Strategy accuracy
-
 Circular dependency detection
-
 Edge-case handling
 
 🕒 Time Breakdown
@@ -270,18 +258,13 @@ Frontend (UI + fetch + graph)	1.5 hours
 Testing	30 minutes
 CORS, debugging & integration	30 minutes
 README preparation & polishing	30 minutes
+
 🔮 Future Improvements
-
 User-configurable weighting for scoring algorithm
-
 Database persistence (store tasks per user)
-
 Swagger/OpenAPI documentation
-
 Kanban/Eisenhower Matrix view
-
 AI-based learning mode (adjust scoring based on user habits)
-
 Weekend/holiday-aware urgency calculations
 Draggable Kanban / Eisenhower board
 Machine learning “Learning Mode”
