@@ -160,70 +160,129 @@ Copy code
 GET /api/tasks/suggest/
 Returns the top 3 tasks with explanations.
 
-🧠 Algorithm Explanation (300–400 words)
-The Smart Task Analyzer algorithm calculates a composite priority score based on four dimensions: urgency, importance, effort, and dependencies.
+🧠 Algorithm Explanation
 
-Urgency is derived from the due date. Tasks that are overdue receive the highest urgency boost since they represent immediate risk. Tasks closer to their deadline also score higher. Missing or invalid due dates are handled gracefully by treating them as neutral urgency instead of generating errors.
+The Smart Task Analyzer algorithm calculates a composite priority score using four key dimensions: urgency, importance, effort, and dependencies.
 
-Importance is a direct user-provided score ranging from 1 to 10. This reflects business impact and contributes strongly to the final score. Higher importance naturally increases ranking.
+Urgency
 
-Effort uses the estimated number of hours required. The algorithm favors “quick wins,” meaning that tasks requiring fewer hours gain a slight bonus. This helps users complete small tasks rapidly and maintain momentum.
+Derived from the task’s due date.
 
-Dependencies add an intelligent layer to prioritization. A task that unblocks others is considered more valuable to complete early. The system constructs a dependency graph and counts how many tasks depend on each task. Tasks that unlock multiple others receive a multiplier bonus. Circular dependencies are detected via depth-first search; tasks inside cycles are marked with warnings rather than breaking the algorithm.
+Overdue tasks receive the highest urgency boost because they represent immediate risk.
 
-All four components are normalized to a 0–1 scale. A weighted scoring formula combines them, with urgency and importance weighted slightly more than effort. The dependency multiplier is applied at the end to reward unblockers.
+Tasks closer to their deadline get progressively higher scores.
 
-The system supports multiple strategies:
+Missing or invalid due dates are treated as neutral urgency rather than causing errors.
 
-Smart Balance (default) blends all factors.
+Importance
 
-Deadline Driven prioritizes urgency.
+A direct user-provided score from 1–10.
 
-High Impact focuses purely on importance.
+Reflects business or functional impact.
 
-Fastest Wins favors low-effort tasks.
+Strongly influences the priority score.
 
-This ensures flexibility across different work styles.
+Higher importance directly increases ranking.
+
+Effort
+
+Based on the estimated number of hours required.
+
+The algorithm favors quick wins.
+
+Lower-effort tasks receive a bonus, helping users build momentum by completing small tasks early.
+
+Dependencies
+
+Dependencies introduce a structural layer to prioritization.
+
+A task that unblocks other tasks is treated as more valuable to complete early.
+
+A dependency graph is constructed, counting how many tasks depend on a given task.
+
+Tasks that unlock multiple others receive a multiplier bonus.
+
+Circular dependencies are detected via depth-first search (DFS); tasks inside cycles are flagged without breaking processing.
+
+Weighting & Scoring
+
+All four factors are normalized to a 0–1 scale.
+A weighted formula combines the components:
+
+Urgency and importance hold slightly higher weight.
+
+Effort contributes as a quick-win modifier.
+
+Dependency multiplier is applied last to emphasize high-leverage tasks.
+
+Supported Strategies
+
+Smart Balance (Default): Blends urgency, importance, effort, and dependencies.
+
+Deadline Driven: Focuses primarily on urgency.
+
+High Impact: Prioritizes importance above everything else.
+
+Fastest Wins: Ranks based on least effort first.
+
+This multi-strategy system ensures flexibility across different workflows and user preferences.
 
 🕸 Dependency Graph Visualization (SVG)
-After task analysis, the frontend draws a circular graph where:
+
+After task analysis, the frontend generates a real-time SVG graph where:
 
 Each node represents a task
 
 Arrows represent dependencies
 
-Node color shows priority level
+Node color reflects priority level
 
-Layout adjusts dynamically based on task count
+Layout adjusts dynamically based on the number of tasks
 
-This visualization helps identify bottleneck tasks and circular dependencies instantly.
+This visualization instantly highlights:
+
+Bottleneck tasks
+
+Unblockers
+
+Circular dependency issues
+
+Task clusters
 
 🧪 Running Tests
-bash
-Copy code
 python manage.py test tasks
-Tests cover:
 
-Score comparisons
 
-Strategy behaviors
+Tests include:
+
+Score validation
+
+Strategy accuracy
 
 Circular dependency detection
 
+Edge-case handling
+
 🕒 Time Breakdown
-Backend (API + scoring algorithm): 2 hours
-
-Frontend (UI + table + fetch + graph): 1.5 hours
-
-Testing: 30 minutes
-
-CORS, debugging, integration: 30 minutes
-
-README + polishing: 30 minutes
-
+Component	Time Spent
+Backend (API + scoring engine)	2 hours
+Frontend (UI + fetch + graph)	1.5 hours
+Testing	30 minutes
+CORS, debugging & integration	30 minutes
+README preparation & polishing	30 minutes
 🔮 Future Improvements
-User-configurable algorithm weight settings
-Database persistence for tasks
+
+User-configurable weighting for scoring algorithm
+
+Database persistence (store tasks per user)
+
+Swagger/OpenAPI documentation
+
+Kanban/Eisenhower Matrix view
+
+AI-based learning mode (adjust scoring based on user habits)
+
+Weekend/holiday-aware urgency calculations
 Draggable Kanban / Eisenhower board
 Machine learning “Learning Mode”
 Holiday/weekend-aware urgency
