@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Task Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-root">
+    <header class="app-header">
+      <div class="header-left">
+        <h1>Smart Task Analyzer</h1>
+        <p>Score, prioritize, and visualize tasks with multiple strategies.</p>
+      </div>
+      <div class="header-right">
+        <span class="badge badge-pill badge-live">LOCAL DEV</span>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- LEFT COLUMN: INPUTS -->
+      <section class="column column-left">
+        <!-- Single Task Form -->
+        <section class="card">
+          <h2 class="card-title">Add Task</h2>
+          <p class="card-subtitle">
+            Create tasks one by one. Use IDs if you want dependencies between them.
+          </p>
+
+          <form id="task-form" class="form-grid">
+            <div class="form-group">
+              <label for="task-id-input">Task ID (optional)</label>
+              <input
+                type="text"
+                id="task-id-input"
+                placeholder="e.g. T1"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="task-title-input">Title</label>
+              <input
+                type="text"
+                id="task-title-input"
+                placeholder="Fix login bug"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="task-due-date-input">Due Date</label>
+              <input type="date" id="task-due-date-input" />
+            </div>
+
+            <div class="form-group">
+              <label for="task-estimated-hours-input">Estimated Hours</label>
+              <input
+                type="number"
+                id="task-estimated-hours-input"
+                min="0"
+                step="0.5"
+                placeholder="3"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="task-importance-input">Importance (1–10)</label>
+              <input
+                type="number"
+                id="task-importance-input"
+                min="1"
+                max="10"
+                step="1"
+                placeholder="8"
+              />
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="task-dependencies-input">Dependencies (comma-separated IDs)</label>
+              <input
+                type="text"
+                id="task-dependencies-input"
+                placeholder="e.g. T1, T2"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="add-task-btn" class="btn btn-primary">
+                + Add Task
+              </button>
+              <button type="reset" class="btn btn-ghost">Clear</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Bulk JSON Input -->
+        <section class="card">
+          <h2 class="card-title">Bulk JSON Input</h2>
+          <p class="card-subtitle">
+            Paste an array of tasks and load them into the current task list.
+          </p>
+          <textarea
+            id="bulk-json-input"
+            rows="8"
+            spellcheck="false"
+            placeholder='[
+  {
+    "id": "T1",
+    "title": "Fix login bug",
+    "due_date": "2025-11-30",
+    "estimated_hours": 3,
+    "importance": 8,
+    "dependencies": []
+  }
+]'
+          ></textarea>
+          <div class="form-actions">
+            <button type="button" id="load-json-btn" class="btn btn-secondary">
+              Load JSON as Tasks
+            </button>
+          </div>
+        </section>
+
+        <!-- Current Task List -->
+        <section class="card">
+          <h2 class="card-title">Current Task List</h2>
+          <p class="card-subtitle">
+            These tasks will be sent to the backend when you click <strong>Analyze Tasks</strong>.
+          </p>
+
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Due</th>
+                  <th>Hours</th>
+                  <th>Imp.</th>
+                  <th>Deps</th>
+                </tr>
+              </thead>
+              <tbody id="task-list-body">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <button type="button" id="clear-tasks-btn" class="btn btn-ghost btn-sm">
+            Clear all tasks
+          </button>
+        </section>
+      </section>
+
+      <!-- RIGHT COLUMN: ANALYSIS, RESULTS & GRAPH -->
+      <section class="column column-right">
+        <!-- Strategy & Actions -->
+        <section class="card">
+          <h2 class="card-title">Analysis Strategy</h2>
+          <p class="card-subtitle">
+            Pick a strategy and analyze the current tasks. You can also fetch top suggestions.
+          </p>
+
+          <div class="strategy-row">
+            <div class="form-group">
+              <label for="strategy-select">Strategy</label>
+              <select id="strategy-select">
+                <option value="smart_balance">Smart Balance (default)</option>
+                <option value="fastest_wins">Fastest Wins</option>
+                <option value="high_impact">High Impact</option>
+                <option value="deadline_driven">Deadline Driven</option>
+              </select>
+            </div>
+
+            <div class="strategy-actions">
+              <button id="analyze-btn" class="btn btn-primary">
+                ⚙ Analyze Tasks
+              </button>
+              <button id="suggest-btn" class="btn btn-secondary">
+                🎯 Suggest 3 Tasks for Today
+              </button>
+            </div>
+          </div>
+
+          <div id="status-bar" class="status-bar">
+            Ready. Add tasks and click <strong>Analyze Tasks</strong>.
+          </div>
+        </section>
+
+        <!-- Analysis Results -->
+        <section class="card">
+          <div class="card-header-row">
+            <div>
+              <h2 class="card-title">Analyzed & Prioritized Tasks</h2>
+              <p class="card-subtitle" id="analysis-subtitle">
+                Results will appear here after analysis.
+              </p>
+            </div>
+            <div id="active-strategy-pill" class="badge badge-pill badge-muted">
+              Strategy: –
+            </div>
+          </div>
+
+          <div class="table-wrapper table-wrapper-tall">
+            <table class="table table-tight">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Task</th>
+                  <th>Score</th>
+                  <th>Priority</th>
+                  <th>Due</th>
+                  <th>Hours</th>
+                  <th>Imp.</th>
+                  <th>Why?</th>
+                </tr>
+              </thead>
+              <tbody id="analysis-body">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Dependency Graph Visualization -->
+        <section class="card">
+          <div class="card-header-row">
+            <div>
+              <h2 class="card-title">Dependency Graph</h2>
+              <p class="card-subtitle">
+                Tasks that other tasks depend on are more central. Arrows go from dependency ➜ dependent.
+              </p>
+            </div>
+          </div>
+
+          <div class="graph-wrapper">
+            <svg id="dependency-graph" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+              <!-- Nodes and edges drawn by JS -->
+            </svg>
+            <div id="graph-empty-state" class="graph-empty-state">
+              Run an analysis to view the dependency graph.
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
